@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assinar Contrato</title>
+    <title>Assinatura</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -73,8 +73,8 @@
 <body>
 
 <div class="container">
-    <h2>Assinar Contrato</h2>
-    <p class="instructions">Preencha seu CPF e assine na área abaixo.</p>
+    <h2>Assinar contrato</h2>
+    <p class="instructions">Preencha seu CPF e assine na área abaixo</p>
 
     <!-- Campo de CPF com validação para aceitar apenas números -->
     <form id="contractForm">
@@ -106,19 +106,20 @@
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    // Inicia a assinatura
+    // Função para iniciar a assinatura no canvas
     function startDrawing(e) {
         e.preventDefault();
         isDrawing = true;
-        lastX = e.touches ? e.touches[0].clientX : e.offsetX;
-        lastY = e.touches ? e.touches[0].clientY : e.offsetY;
+        lastX = e.touches ? e.touches[0].clientX - canvas.offsetLeft : e.offsetX;
+        lastY = e.touches ? e.touches[0].clientY - canvas.offsetTop : e.offsetY;
     }
 
+    // Função para desenhar no canvas
     function draw(e) {
         e.preventDefault();
         if (!isDrawing) return;
-        const x = e.touches ? e.touches[0].clientX : e.offsetX;
-        const y = e.touches ? e.touches[0].clientY : e.offsetY;
+        const x = e.touches ? e.touches[0].clientX - canvas.offsetLeft : e.offsetX;
+        const y = e.touches ? e.touches[0].clientY - canvas.offsetTop : e.offsetY;
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(x, y);
@@ -127,6 +128,7 @@
         lastY = y;
     }
 
+    // Função para parar o desenho
     function stopDrawing() {
         isDrawing = false;
     }
