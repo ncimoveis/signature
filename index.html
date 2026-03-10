@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assinatura</title>
+    <title>Captura de Assinatura</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,13 +47,8 @@
             background-color: #033042;
         }
 
-        .btn:disabled {
-            background-color: #b0b0b0;
-            cursor: not-allowed;
-        }
-
         .clear-btn {
-            background-color: #bb2819; /* Alterada para a cor desejada */
+            background-color: #bb2819;
         }
 
         #signature-canvas {
@@ -99,30 +94,41 @@
     ctx.lineJoin = "round";
 
     // Inicia a assinatura
-    canvas.addEventListener("mousedown", startDrawing);
-    canvas.addEventListener("mousemove", draw);
-    canvas.addEventListener("mouseup", stopDrawing);
-    canvas.addEventListener("mouseout", stopDrawing);
-
     function startDrawing(e) {
+        e.preventDefault();
         isDrawing = true;
-        lastX = e.offsetX;
-        lastY = e.offsetY;
+        lastX = e.touches ? e.touches[0].offsetX : e.offsetX;
+        lastY = e.touches ? e.touches[0].offsetY : e.offsetY;
     }
 
     function draw(e) {
+        e.preventDefault();
         if (!isDrawing) return;
+        const x = e.touches ? e.touches[0].offsetX : e.offsetX;
+        const y = e.touches ? e.touches[0].offsetY : e.offsetY;
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.lineTo(x, y);
         ctx.stroke();
-        lastX = e.offsetX;
-        lastY = e.offsetY;
+        lastX = x;
+        lastY = y;
     }
 
     function stopDrawing() {
         isDrawing = false;
     }
+
+    // Adicionando os eventos de toque para dispositivos móveis
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseout", stopDrawing);
+
+    // Eventos de toque para telas sensíveis
+    canvas.addEventListener("touchstart", startDrawing);
+    canvas.addEventListener("touchmove", draw);
+    canvas.addEventListener("touchend", stopDrawing);
+    canvas.addEventListener("touchcancel", stopDrawing);
 
     // Função para limpar o canvas
     function clearCanvas() {
