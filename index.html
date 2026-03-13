@@ -162,21 +162,21 @@
         formData.append('signature', signatureData); 
         formData.append('cpf', cpf); 
 
-        const webhookUrl = 'https://ericklinsn8n.app.n8n.cloud/webhook-test/capturar-assinatura';
+        const webhookUrl = 'https://ericklinsn8n.app.n8n.cloud/webhook/propostasignature';
 
         fetch(webhookUrl, {
             method: 'POST',
             body: formData,
         }).then(response => {
             if (response.ok) {
-                alert('Assinatura associada com sucesso!');
+                alert('Documento assinado com sucesso! Enviaremos uma cópia no seu E-mail');
             }
         });
     }
 
     function validateCPF() {
         const cpfField = document.getElementById('cpf');
-        cpfField.value = cpfField.value.replace(/[^0-9]/g, ''); // Remove qualquer caractere não numérico
+        cpfField.value = cpfField.value.replace(/[^0-9]/g, '');
     }
 </script>
 
