@@ -74,18 +74,14 @@
 <body>
 
 <div class="container">
-    <!-- Alterei o título conforme pedido -->
     <h2>Assinar Contrato</h2>
-    <!-- Alterei a instrução conforme pedido -->
     <p class="instructions">Preencha seu CPF e assine na área abaixo</p>
 
-    <!-- Campo de CPF com validação para aceitar apenas números -->
     <form id="contractForm">
         <input type="text" name="cpf" placeholder="Digite seu CPF" id="cpf" required oninput="validateCPF()">
         <br>
     </form>
 
-    <!-- Canvas para captura de assinatura -->
     <canvas id="signature-canvas"></canvas>
     <br>
 
@@ -109,7 +105,6 @@
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    // Função para iniciar a assinatura no canvas
     function startDrawing(e) {
         e.preventDefault();
         isDrawing = true;
@@ -117,7 +112,6 @@
         lastY = e.touches ? e.touches[0].clientY - canvas.offsetTop : e.offsetY;
     }
 
-    // Função para desenhar no canvas
     function draw(e) {
         e.preventDefault();
         if (!isDrawing) return;
@@ -131,40 +125,45 @@
         lastY = y;
     }
 
-    // Função para parar o desenho
     function stopDrawing() {
         isDrawing = false;
     }
 
-    // Adicionando os eventos de toque para dispositivos móveis
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
     canvas.addEventListener("mouseout", stopDrawing);
 
-    // Eventos de toque para telas sensíveis
     canvas.addEventListener("touchstart", startDrawing);
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDrawing);
     canvas.addEventListener("touchcancel", stopDrawing);
 
-    // Função para limpar o canvas
     function clearCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Função para converter a assinatura em PNG e enviar para o webhook
     async function submitSignature() {
-        const formData = new FormData(document.getElementById('contractForm'));
-        const signatureData = canvas.toDataURL("image/png"); // Captura a assinatura
-        const cpf = document.getElementById('cpf').value; // Pega o CPF
-        formData.append('signature', signatureData); // Anexa a assinatura
-        formData.append('cpf', cpf); // Anexa o CPF para associar
+        const cpf = document.getElementById('cpf').value;
+        const signatureData = canvas.toDataURL("image/png");
 
-        // URL do seu webhook do n8n
+        // Verifica se o CPF foi preenchido e se há uma assinatura desenhada
+        if (cpf.trim() === "") {
+            alert("Por favor, preencha seu CPF.");
+            return;
+        }
+
+        if (signatureData === "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...") {
+            alert("Por favor, faça sua assinatura.");
+            return;
+        }
+
+        const formData = new FormData(document.getElementById('contractForm'));
+        formData.append('signature', signatureData); 
+        formData.append('cpf', cpf); 
+
         const webhookUrl = 'https://ericklinsn8n.app.n8n.cloud/webhook-test/capturar-assinatura';
 
-        // Envia os dados para o seu webhook
         fetch(webhookUrl, {
             method: 'POST',
             body: formData,
@@ -175,7 +174,6 @@
         });
     }
 
-    // Função para validar o CPF (somente números)
     function validateCPF() {
         const cpfField = document.getElementById('cpf');
         cpfField.value = cpfField.value.replace(/[^0-9]/g, ''); // Remove qualquer caractere não numérico
