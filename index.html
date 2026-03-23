@@ -48,7 +48,7 @@
         }
 
         .clear-btn {
-            background-color: #bb2819 !important;  /* Garantir que a cor fique vermelha */
+            background-color: #bb2819 !important;
             color: #fff;
         }
 
@@ -75,10 +75,10 @@
 
 <div class="container">
     <h2>Assinar Contrato</h2>
-    <p class="instructions">Preencha seu CPF e assine na área abaixo</p>
+    <p class="instructions">Copie e cole seu código de acesso e assine na área abaixo</p>
 
     <form id="contractForm">
-        <input type="text" name="cpf" placeholder="Digite seu CPF" id="cpf" required oninput="validateCPF()">
+        <input type="text" name="codigo" placeholder="Código de Acesso" id="codigo" required>
         <br>
     </form>
 
@@ -144,23 +144,17 @@
     }
 
     async function submitSignature() {
-        const cpf = document.getElementById('cpf').value;
+        const codigo = document.getElementById('codigo').value;
         const signatureData = canvas.toDataURL("image/png");
 
-        // Verifica se o CPF foi preenchido e se há uma assinatura desenhada
-        if (cpf.trim() === "") {
-            alert("Por favor, preencha seu CPF.");
-            return;
-        }
-
-        if (signatureData === "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...") {
-            alert("Por favor, faça sua assinatura.");
+        if (codigo.trim() === "") {
+            alert("Por favor, insira seu código de acesso.");
             return;
         }
 
         const formData = new FormData(document.getElementById('contractForm'));
         formData.append('signature', signatureData); 
-        formData.append('cpf', cpf); 
+        formData.append('codigo', codigo); 
 
         const webhookUrl = 'https://ericklinsn8n.app.n8n.cloud/webhook/propostasignature';
 
@@ -172,11 +166,6 @@
                 alert('Documento assinado com sucesso! Enviaremos uma cópia no seu E-mail');
             }
         });
-    }
-
-    function validateCPF() {
-        const cpfField = document.getElementById('cpf');
-        cpfField.value = cpfField.value.replace(/[^0-9]/g, '');
     }
 </script>
 
